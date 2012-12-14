@@ -11,5 +11,6 @@ int main() {
 	Log::Warn("I can see it in your eyes, I can see it in your smile...");
 	Log::Error("You're all I ever wanted...");
 	Log::Fatal("I love you");
+    Log::Fatal("I love you %s %d %p","Honey!", 1, 2);
 	return 0;
 }

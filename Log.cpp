@@ -1,7 +1,7 @@
 #include "Log.h"
 #include <ctime>
 #include <iostream>
-
+#include <stdarg.h>
 /**
  * @brief Constructor
  */
@@ -55,16 +55,16 @@ void Log::write( const std::string& message ) {
  * @param message The message to log
  * @return True if the log was successful
  */
-bool Log::log( const Type type, const std::string& message ) {
+inline bool Log::log( const Type type, const std::string& message ) {
 	static const int TIMESTAMP_BUFFER_SIZE = 21;
 	
 	if( type <= m_threshold ) {
-		char buffer[21];
+		char buffer[64];
 		time_t timestamp;
 		time( &timestamp );
-		strftime( buffer, sizeof( buffer ), "[%X %x] ", localtime(&timestamp) );
+		strftime( buffer, sizeof( buffer ), "[%Y-%m-%d %H:%M:%S] ", localtime(&timestamp) );
 
-		write( std::string( buffer ) + std::string( TypeToString(type) ) + "	" + message );
+		write( std::string( buffer ) + std::string( TypeToString(type) ) + " - " + message );
 		return true;
 	}
 	return false;
@@ -115,15 +115,15 @@ bool Log::Finalise() {
 const char* Log::TypeToString(Type type) {
 	switch(type) {
 	case FATAL:
-		return "FATAL";
+		return "[FATAL]";
 	case ERROR:
-		return "ERROR";
+		return "[ERROR]";
 	case WARN:
-		return "WARN";
+		return "[WARN ]";
 	case INFO:
-		return "INFO";
+		return "[INFO ]";
 	case DEBUG:
-		return "DEBUG";
+		return "[DEBUG]";
 	default:
 		break;
 	}
@@ -149,8 +149,17 @@ void Log::SetThreshold( Type type ) {
  * @param message The message to log
  * @return True if the log was successful
  */
-bool Log::Fatal( const std::string& message ) {
+bool Log::Fatal( const std::string& message) {
 	return Log::get().log( FATAL, message );
+}
+bool Log::Fatal( const char* format, ... ) {
+	char szBuffer[1024] = {'\0'};
+	va_list args;
+    va_start(args, format);
+	vsnprintf(szBuffer, sizeof(szBuffer), format, args);
+	va_end(args);
+	std::string msg(szBuffer);
+	return Log::get().log( FATAL, msg );
 }
 
 /**
@@ -162,6 +171,15 @@ bool Log::Fatal( const std::string& message ) {
 bool Log::Error( const std::string& message ) {
 	return Log::get().log( ERROR, message );
 }
+bool Log::Error( const char* format, ... ) {
+	char szBuffer[1024] = {'\0'};
+	va_list args;
+    va_start(args, format);
+	vsnprintf(szBuffer, sizeof(szBuffer), format, args);
+	va_end(args);
+	std::string msg(szBuffer);
+	return Log::get().log( ERROR, msg );
+}
 
 /**
  * @brief Writes a warning to the log
@@ -171,6 +189,15 @@ bool Log::Error( const std::string& message ) {
  */
 bool Log::Warn( const std::string& message ) {
 	return Log::get().log( WARN, message );
+}
+bool Log::Warn( const char* format, ... ) {
+	char szBuffer[1024] = {'\0'};
+	va_list args;
+    va_start(args, format);
+	vsnprintf(szBuffer, sizeof(szBuffer), format, args);
+	va_end(args);
+	std::string msg(szBuffer);
+	return Log::get().log( WARN, msg );
 }
 
 /**
@@ -182,6 +209,15 @@ bool Log::Warn( const std::string& message ) {
 bool Log::Info( const std::string& message ) {
 	return Log::get().log( INFO, message );
 }
+bool Log::Info( const char* format, ... ) {
+	char szBuffer[1024] = {'\0'};
+	va_list args;
+    va_start(args, format);
+	vsnprintf(szBuffer, sizeof(szBuffer), format, args);
+	va_end(args);
+	std::string msg(szBuffer);
+	return Log::get().log( INFO, msg );
+}
 
 /**
  * @brief Writes a Debug message to the log
@@ -191,6 +227,15 @@ bool Log::Info( const std::string& message ) {
  */
 bool Log::Debug( const std::string& message ) {
 	return Log::get().log( DEBUG, message );
+}
+bool Log::Debug( const char* format, ... ) {
+	char szBuffer[1024] = {'\0'};
+	va_list args;
+    va_start(args, format);
+	vsnprintf(szBuffer, sizeof(szBuffer), format, args);
+	va_end(args);
+	std::string msg(szBuffer);
+	return Log::get().log( DEBUG, msg );
 }
 
 /**

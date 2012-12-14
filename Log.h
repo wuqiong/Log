@@ -33,7 +33,7 @@
  */
 class Log {
 	public:
-		static const enum Type {
+		enum Type {
 			FATAL,
 			ERROR,
 			WARN,
@@ -56,7 +56,6 @@ class Log {
 
 		void write( const std::string& message );
 		bool log( const Type type, const std::string& message );
-
 		Log& operator=(const Log&);
 
 	public:
@@ -67,10 +66,16 @@ class Log {
 
 		static void SetThreshold( Type type );
 		static bool Fatal( const std::string& message );
+		static bool Fatal( const char* format, ... );
 		static bool Error( const std::string& message );
+		static bool Error( const char* format, ... );
 		static bool Warn( const std::string& message );
+		static bool Warn( const char* format, ... );
 		static bool Info( const std::string& message );
+		static bool Info( const char* format, ... );
 		static bool Debug( const std::string& message );
+		static bool Debug( const char* format, ... );
+
 
 		static std::string Peek();
 		static bool Push(const std::string& input);
